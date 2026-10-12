@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>软路由与家庭旁路由实战：OpenWrt与全屋科学分流网络搭建指南 | 渔云加速器 锦鲤文札</title>
+  <meta name="description" content="告别每台设备单独配置！手把手教你利用软路由工控机打造全屋透明分流网关，详解主旁路由拓扑、DNS防污染与GeoIP分流实战技巧。">
+  <style>
+    :root {
+      --bg-paper: #f7f5ed;
+      --bg-card: #ffffff;
+      --color-ink-deep: #1a1e23;
+      --color-ink-muted: #57606f;
+      --color-celadon: #1e5a7d;
+      --color-celadon-light: #e6eff5;
+      --color-cinnabar: #c0392b;
+      --border-ink-soft: #e2ded0;
+      --font-serif: "Source Han Serif CN", "Songti SC", "SimSun", serif;
+      --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: var(--bg-paper);
+      color: var(--color-ink-deep);
+      font-family: var(--font-sans);
+      line-height: 1.85;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* Top Nav */
+    .ink-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(247, 245, 237, 0.95);
+      border-bottom: 1px solid var(--border-ink-soft);
+      backdrop-filter: blur(8px);
+    }
+    .ink-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .ink-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .ink-logo-svg {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+    }
+    .ink-brand-name {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      color: var(--color-ink-deep);
+    }
+    .ink-menu-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
+    }
+    .ink-menu-links a {
+      font-family: var(--font-serif);
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--color-ink-deep);
+      transition: color 0.2s;
+    }
+    .ink-menu-links a:hover, .ink-menu-links a.active {
+      color: var(--color-cinnabar);
+    }
+    .ink-nav-login {
+      background: var(--color-celadon);
+      color: #fff;
+      font-size: 13.5px;
+      font-weight: 700;
+      padding: 8px 20px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .ink-nav-login:hover {
+      background: #15435e;
+    }
+
+    /* Hub & Article Layout */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+    .hub-poetry-header {
+      text-align: center;
+      padding: 45px 0 55px;
+      margin-bottom: 45px;
+      border-bottom: 1px solid var(--border-ink-soft);
+    }
+    .hub-seal-tag {
+      display: inline-block;
+      font-family: var(--font-serif);
+      color: var(--color-cinnabar);
+      border: 1px solid var(--color-cinnabar);
+      padding: 3px 12px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+    .hub-serif-h1 {
+      font-family: var(--font-serif);
+      font-size: 38px;
+      font-weight: 900;
+      color: var(--color-ink-deep);
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+    .hub-serif-desc {
+      color: var(--color-ink-muted);
+      font-size: 15.5px;
+      max-width: 660px;
+      margin: 0 auto;
+      line-height: 1.8;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+    }
+    .ink-article-card {
+      background: #ffffff;
+      border: 1px solid var(--border-ink-soft);
+      border-radius: 6px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 18px rgba(26, 30, 35, 0.03);
+      transition: all 0.25s;
+    }
+    .ink-article-card:hover {
+      border-color: var(--color-celadon);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(30, 90, 125, 0.08);
+    }
+    .card-meta-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--color-ink-muted);
+      margin-bottom: 14px;
+    }
+    .card-seal {
+      background: rgba(192, 57, 43, 0.08);
+      color: var(--color-cinnabar);
+      padding: 2px 8px;
+      border-radius: 2px;
+      font-weight: 700;
+      font-size: 11.5px;
+      font-family: var(--font-serif);
+    }
+    .card-title-serif {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--color-ink-deep);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .card-excerpt-txt {
+      font-size: 14.5px;
+      color: var(--color-ink-muted);
+      line-height: 1.7;
+      margin-bottom: 24px;
+      flex-grow: 1;
+    }
+    .card-action-link {
+      color: var(--color-cinnabar);
+      font-weight: 800;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-serif);
+    }
+
+    /* Article Specific */
+    .ink-crumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      color: var(--color-ink-muted);
+      margin-bottom: 30px;
+      font-family: var(--font-serif);
+    }
+    .ink-crumb a:hover { color: var(--color-cinnabar); }
+    .article-header-box {
+      margin-bottom: 35px;
+      padding-bottom: 25px;
+      border-bottom: 1px solid var(--border-ink-soft);
+    }
+    .article-title-serif {
+      font-family: var(--font-serif);
+      font-size: 34px;
+      font-weight: 900;
+      color: var(--color-ink-deep);
+      line-height: 1.35;
+      margin-bottom: 18px;
+      letter-spacing: 0.5px;
+    }
+    .article-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 13px;
+      color: var(--color-ink-muted);
+      flex-wrap: wrap;
+    }
+    .article-body-container {
+      background: #ffffff;
+      border: 1px solid var(--border-ink-soft);
+      border-radius: 8px;
+      padding: 50px;
+      font-size: 16px;
+      line-height: 1.9;
+      color: #2c3e50;
+      box-shadow: 0 4px 20px rgba(26, 30, 35, 0.03);
+    }
+    .article-body-container h2 {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--color-ink-deep);
+      margin: 40px 0 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-ink-soft);
+      letter-spacing: 0.5px;
+    }
+    .article-body-container h2:first-child { margin-top: 0; }
+    .article-body-container h3 {
+      font-family: var(--font-serif);
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--color-celadon);
+      margin: 28px 0 14px;
+    }
+    .article-body-container p {
+      margin-bottom: 22px;
+      text-align: justify;
+    }
+    .article-body-container ul, .article-body-container ol {
+      margin: 0 0 24px 24px;
+    }
+    .article-body-container li {
+      margin-bottom: 10px;
+    }
+
+    /* Dedicated Cinnabar Hyperlink Styling */
+    .content-link, .content-link:visited {
+      color: var(--color-cinnabar) !important;
+      font-weight: 700;
+      text-decoration: underline !important;
+      text-underline-offset: 4px;
+      transition: opacity 0.2s;
+    }
+    .content-link:hover {
+      opacity: 0.8;
+    }
+
+    .article-foot-tag {
+      margin-top: 50px;
+      padding-top: 25px;
+      border-top: 1px dashed var(--border-ink-soft);
+      font-size: 13.5px;
+      color: var(--color-ink-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    /* Footer */
+    .strict-footer-ink {
+      background: #171b20;
+      border-top: 3px solid var(--color-celadon);
+      padding: 40px 20px;
+      text-align: center;
+    }
+    .footer-four-ink {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 36px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .footer-four-ink a {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #95a5a6;
+      transition: color 0.2s;
+    }
+    .footer-four-ink a:hover { color: #ffffff; text-decoration: underline; }
+    .footer-ink-copy {
+      font-size: 12px;
+      color: #636e72;
+    }
+
+    @media (max-width: 860px) {
+      .ink-menu-links { display: none; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .article-body-container { padding: 28px 20px; }
+      .article-title-serif { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <header class="ink-nav">
+    <div class="ink-nav-inner">
+      <a href="index.html" class="ink-brand">
+        <svg class="ink-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 85 C 24 38, 55 16, 82 24" stroke="#1a1e23" stroke-width="3" stroke-linecap="round"/>
+          <line x1="82" y1="24" x2="82" y2="52" stroke="#1e5a7d" stroke-width="1.5" stroke-dasharray="3 3"/>
+          <circle cx="82" cy="52" r="3" fill="#c0392b"/>
+          <path d="M34 60 C 48 45, 72 48, 80 58 C 70 65, 52 68, 34 60 Z" fill="#1e5a7d"/>
+          <path d="M34 60 L 22 52 L 25 68 Z" fill="#c0392b"/>
+          <path d="M52 52 L 40 34 L 58 48 Z" fill="#c0392b"/>
+        </svg>
+        <div class="ink-brand-name">渔云加速器</div>
+      </a>
+
+      <nav>
+        <ul class="ink-menu-links">
+          <li><a href="index.html#advantages">锦鲤优势</a></li>
+          <li><a href="index.html#streaming">影音通达</a></li>
+          <li><a href="index.html#pricing">清风套餐</a></li>
+          <li><a href="index.html#faq">答客所问</a></li>
+          <li><a href="index.html#reviews">知音口碑</a></li>
+          <li><a href="chronicles.html" class="active">锦鲤文札</a></li>
+        </ul>
+      </nav>
+
+      <a href="https://ww012.twilightaff.com/#/?code=A56DH1Af" target="_blank" rel="nofollow" class="ink-nav-login">
+        登录节点
+      </a>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav class="ink-crumb">
+      <a href="index.html">首页</a>
+      <span>&gt;</span>
+      <a href="chronicles.html">锦鲤文札</a>
+      <span>&gt;</span>
+      <span>正文</span>
+    </nav>
+
+    <header class="article-header-box">
+      <h1 class="article-title-serif">软路由与家庭旁路由实战：OpenWrt与全屋科学分流网络搭建指南</h1>
+      <div class="article-meta-row">
+        <span>刊发日期: 2026-10-05</span>
+        <span>栏目: 家庭网络架构</span>
+        <span>撰稿人: 极客折腾社</span>
+        <span>阅读时长: 约5分钟</span>
+      </div>
+    </header>
+
+    <article class="article-body-container">
+
+<h2>为什么要打造一台全屋透明代理的旁路由网关</h2>
+<p>随着智能家居与多端数码设备的激增，现代家庭中的联网终端往往突破了数十台：苹果与安卓手机、iPad、MacBook、Windows 台式机、智能电视盒子、Nintendo Switch、PS5 主机甚至扫地机器人。如果每一台设备都要单独安装代理客户端、单独导入订阅、单独调试分流规则，不仅维护负担极其繁重，而且对于 Apple TV、游戏主机等无法随意安装客户端的闭源系统而言，更是无从下手。</p>
+<p>解决这一痛点的终极形态，便是在家庭局域网中部署一台软路由或“旁路由”（Side Gateway）。通过在网关底层实现全局智能流量分流，局域网内的所有设备只要连上 Wi-Fi，无需任何额外配置，即可全自动实现国内直连、海外加速的“全局无感透明漫游”。</p>
+
+<h2>硬件选型指南：从工控机、斐讯 N1 到迷你主机</h2>
+<p>打造软路由的第一步是根据家庭带宽与预算合理挑选硬件载体：</p>
+<ul>
+  <li><strong>低成本入门级（斐讯 N1 / 晶晨 S905 盒子）</strong>：百元内性价比首选，功耗仅需几瓦，能够轻松跑满 200M–300M 科学流量，适合预算有限的小白尝鲜。</li>
+  <li><strong>进阶实用级（Intel J4125 / N5105 多网口工控机）</strong>：配备双 Intel 2.5G 网口，支持物理机单网口或虚拟机 PVE/ESXi 虚拟化部署，能跑满千兆科学吞吐，性能稳定有冗余。</li>
+  <li><strong>全能发烧级（AMD R5/R7 迷你主机）</strong>：兼顾软路由、家庭 NAS 私有云、Docker 容器以及影音媒体服务器，适合重度折腾的技术极客。</li>
+</ul>
+
+<h2>核心配置逻辑：主路由与旁路由的 DHCP 与网关指向</h2>
+<p>在网络拓扑设计上，最为稳健且不易影响全家断网的方案是“主路由负责拨号 + 旁路由负责分流”的旁路模式：</p>
+
+<h3>避免 DNS 劫持与常见污染回路配置</h3>
+<p>主路由保持原有的拨号和 Wi-Fi 发射功能，LAN 口 IP 设为 192.168.1.1。旁路由关闭自身的 DHCP 服务器，LAN 口 IP 设为 192.168.1.2，其网关和 DNS 均指向主路由。在主路由的 DHCP 选项中，将默认网关直接改为旁路由的 192.168.1.2。这样一来，所有连网设备的流量都会先经过旁路由进行规则判定，符合条件的出海流量被透明加密转发，其余流量直接由主路由送出。</p>
+
+<h3>国内外白名单与 GeoIP 自动精准分流</h3>
+<p>在旁路由中运行 OpenClash、PassWall 或 mihomo 内核，加载最新的 GeoIP 与 CN-CIDR 国内 IP 白名单库。确保访问国内主流网站（百度、腾讯、B站等）完全不经过代理核心，直接由主路由千兆硬路由转发，速度毫无损耗且不占软路由 CPU；只有确认为海外目标时才触发节点转发。对于需要为软路由配套采购优质节点的用户，查阅针对嵌入式软路由高兼容性的<a href="https://tizilab.net/" target="_blank" class="content-link">梯子实验室软路由节点精选</a>测评，能够确保长期稳定不闪退。</p>
+
+<h2>电视盒子、游戏主机与扫地机器人的网络隔离</h2>
+<p>在智能家居混杂的环境中，部分国产智能家电或扫地机器人如果被错误判定为海外流量，可能会导致云端连接异常。利用旁路由内置的“IP 访问控制”功能，可以将智能家电的内网 IP 设为“直接放行不走核心”，而将 Apple TV 和游戏主机设为“强力分流”。这种精细化的设备级管控能力，正是软路由最令人称道的技术魅力。</p>
+
+<h2>稳定运行半年的旁路由排错与维护经验</h2>
+<p>要想软路由长期安稳运行不被家人吐槽，有三条黄金守则：第一，固件以稳定为第一要务，切莫盲目频繁追新升级测试版内核；第二，定期在凌晨闲时配置自动重启与规则更新定时任务；第三，保留主路由备用 Wi-Fi 访客网络。只要架构得当，一套高品质的旁路由系统能让您彻底告别繁复的网络调试，尽享家庭智能互联的极乐境界。</p>
+
+      <div class="article-foot-tag">
+        <span>本文由 渔云加速器·锦鲤文札 独家刊载，版权所有。</span>
+        <a href="chronicles.html" class="content-link">返回 锦鲤文札 专栏目录 &rarr;</a>
+      </div>
+    </article>
+  </main>
+
+  <!-- Strict Footer: ONLY 4 titles -->
+  <footer class="strict-footer-ink">
+    <div class="footer-four-ink">
+      <a href="sitemap.html" target="_blank">网站地图</a>
+      <a href="about.html" target="_blank">关于我们</a>
+      <a href="terms.html" target="_blank">服务条款</a>
+      <a href="privacy.html" target="_blank">隐私政策</a>
+    </div>
+    <div class="footer-ink-copy">
+      &copy; 2026 渔云加速器 yuyuncloud.lol 版权所有 | 墨韵云境锦鲤专线网络
+    </div>
+  </footer>
+
+</body>
+</html>
