@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>Chrome、Edge、Firefox 与代理扩展：浏览器怎么搭配 - 锦鲤文札</title>
-  <meta name="description" content="浏览器怎么选、代理扩展是否需要、与客户端如何配合？比较 Chrome、Edge、Firefox 在使用加速服务时的特点与常见的搭配方式。">
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0" name="viewport"/>
+<title>代理扩展和零日志声明怎样核对：浏览器权限、本地记录与服务资料边界</title>
+<meta content="代理扩展和零日志声明怎样核对：浏览器权限、本地记录与服务资料边界，包含操作次序、结果判读与适用条件，帮助读者把实际任务和连接问题分开验证。" name="description"/>
+<style>
     :root {
       --bg-paper: #f7f5ed;
       --bg-card: #ffffff;
@@ -330,88 +331,88 @@
   </style>
 </head>
 <body>
-
-  <!-- Top Nav -->
-  <header class="ink-nav">
-    <div class="ink-nav-inner">
-      <a href="index.html" class="ink-brand">
-        <svg class="ink-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M18 85 C 24 38, 55 16, 82 24" stroke="#1a1e23" stroke-width="3" stroke-linecap="round"/>
-          <line x1="82" y1="24" x2="82" y2="52" stroke="#1e5a7d" stroke-width="1.5" stroke-dasharray="3 3"/>
-          <circle cx="82" cy="52" r="3" fill="#c0392b"/>
-          <path d="M34 60 C 48 45, 72 48, 80 58 C 70 65, 52 68, 34 60 Z" fill="#1e5a7d"/>
-          <path d="M34 60 L 22 52 L 25 68 Z" fill="#c0392b"/>
-          <path d="M52 52 L 40 34 L 58 48 Z" fill="#c0392b"/>
-        </svg>
-        <div class="ink-brand-name">渔云加速器</div>
-      </a>
-
-      <nav>
-        <ul class="ink-menu-links">
-          <li><a href="index.html#advantages">锦鲤优势</a></li>
-          <li><a href="index.html#streaming">影音通达</a></li>
-          <li><a href="index.html#pricing">清风套餐</a></li>
-          <li><a href="index.html#faq">答客所问</a></li>
-          <li><a href="index.html#reviews">知音口碑</a></li>
-          <li><a href="chronicles.html" class="active">锦鲤文札</a></li>
-        </ul>
-      </nav>
-
-      <a href="https://ww012.twilightaff.com/#/?code=A56DH1Af" target="_blank" rel="nofollow" class="ink-nav-login">
+<!-- Top Nav -->
+<header class="ink-nav">
+<div class="ink-nav-inner">
+<a class="ink-brand" href="index.html">
+<svg class="ink-logo-svg" fill="none" viewbox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 85 C 24 38, 55 16, 82 24" stroke="#1a1e23" stroke-linecap="round" stroke-width="3"></path>
+<line stroke="#1e5a7d" stroke-dasharray="3 3" stroke-width="1.5" x1="82" x2="82" y1="24" y2="52"></line>
+<circle cx="82" cy="52" fill="#c0392b" r="3"></circle>
+<path d="M34 60 C 48 45, 72 48, 80 58 C 70 65, 52 68, 34 60 Z" fill="#1e5a7d"></path>
+<path d="M34 60 L 22 52 L 25 68 Z" fill="#c0392b"></path>
+<path d="M52 52 L 40 34 L 58 48 Z" fill="#c0392b"></path>
+</svg>
+<div class="ink-brand-name">渔云加速器</div>
+</a>
+<nav>
+<ul class="ink-menu-links">
+<li><a href="index.html#advantages">锦鲤优势</a></li>
+<li><a href="index.html#streaming">影音通达</a></li>
+<li><a href="index.html#pricing">清风套餐</a></li>
+<li><a href="index.html#faq">答客所问</a></li>
+<li><a href="index.html#reviews">知音口碑</a></li>
+<li><a class="active" href="chronicles.html">锦鲤文札</a></li>
+</ul>
+</nav>
+<a class="ink-nav-login" href="https://ww012.twilightaff.com/#/?code=A56DH1Af" rel="nofollow" target="_blank">
         登录节点
       </a>
+</div>
+</header>
+<main class="container">
+<nav class="ink-crumb">
+<a href="index.html">首页</a>
+<span>&gt;</span>
+<a href="chronicles.html">锦鲤文札</a>
+<span>&gt;</span>
+<span>正文</span>
+</nav>
+<header class="article-header-box">
+<h1 class="article-title-serif">代理扩展和零日志声明怎样核对：浏览器权限、本地记录与服务资料边界</h1>
+<div class="article-meta-row">
+<span>刊发日期: 2026-11-12</span>
+<span>栏目: 浏览器</span>
+<span>撰稿人: 工具观察室</span>
+<span>阅读时长: 约5分钟</span>
+</div>
+</header>
+<article class="article-body-container"><div data-swc-article-body="2026-11-16"><h2>保护隐私不能只看一个开关</h2>
+<p>浏览器扩展、桌面代理、网站账户和连接服务可能分别处理不同资料。服务宣称不保留某类日志，不代表浏览器扩展没有网站权限，也不代表本机不会保存下载与诊断文件。检查隐私配置时，应按组件列出能力与资料范围，先知道谁能做什么，再判断哪些权限是完成任务所必需。</p>
+<h2>第一步盘点实际安装的扩展</h2>
+<p>在Chrome中打开扩展程序管理页面，记录正在启用的扩展名称、来源和用途。已经不再使用却仍然运行的项目应按正常流程停用或移除。不要只检查名称里带代理的扩展，翻译、截图、购物和页面增强工具也可能请求读取网页。每项都写出自己为何需要它，无法解释用途的项目值得进一步核对。</p>
+<h2>第二步查看网站访问范围</h2>
+<p>进入扩展的详情，按当前界面查看它是否可读取和更改网站数据，以及允许在点击时、指定网站或全部网站运行。根据真实用途选择合适范围，不为了少一次点击就自动开放所有网站。调整后访问一个普通测试页面确认功能仍可用，再测试它本来不需要访问的场景，观察设置是否符合预期。</p>
+<h2>网站权限与底层网络控制不是一回事</h2>
+<p>Chrome官方说明，对网站数据访问范围的调整，并不一定影响通过VPN或代理设置改变底层网络访问的扩展。因此不能只将网站权限缩小，就认定它失去所有网络控制能力。还应查看扩展说明、所请求权限与实际设置，理解它是改网页内容、管理代理，还是两者兼有，避免用一个选项代替完整判断。</p>
+<h2>第三步核对隐私窗口中的行为</h2>
+<p>查看是否允许某个扩展在无痕窗口运行，只在确实需要且理解其作用时启用。无痕模式减少部分本机会话痕迹，并不能让获准运行的扩展自动失去能力。测试时使用公开页面，不要为了观察权限把私人账户交给陌生扩展。关闭窗口后还要检查下载文件等主动保存内容是否留在设备上。</p>
+<h2>第四步检查桌面客户端的本地日志</h2>
+<p>查看软件是否提供日志级别、保存位置或导出诊断功能，记录它们实际包含哪些字段。错误排查可能需要时间与连接阶段，但不应无目的地长期公开完整记录。若软件没有清楚说明，先查当前官方文档。删除本地日志也不证明服务端没有资料，两者是不同保存位置，需要分别讨论。</p>
+<h2>第五步把服务声明拆成数据类别</h2>
+<p>阅读隐私说明时，将账户邮箱、付款订单、流量统计、连接时间与目标记录分开。某类不保存，不自动代表其他类别也不存在。查看用途、保留期和访问范围，提到审计时核对报告日期与覆盖系统。不能从加密、无盘或零日志几个词，直接推断整个服务链都无法关联任何信息。</p>
+<h2>第六步测试停用后的实际变化</h2>
+<p>在可控环境中正常停用一个扩展或客户端，访问同一个公开页面，观察代理设置与连接是否按预期恢复。不要同时移除多项工具，否则无法解释差异。若停用扩展后系统仍有代理配置，应按相应产品的正式恢复方法检查，而不是随意删除注册表或重置全部网络。工作设备的管理策略应由负责人处理。</p>
+<h2>第七步核对更新与配置来源</h2>
+<p>从可信项目或正式商店获取软件，注意发布者与权限变化。更新后新增权限需要理解原因，不能仅因过去用过就永远忽略。订阅地址、密钥和账户令牌只保存在受控位置，公开求助时遮住完整内容。来源可信也不等于无需管理权限，它只是判断软件的一个前提。</p>
+<h2>服务比较应包含可维护性</h2>
+<p>参考<a href="https://dajichang.mom/">浏览器隐私机场服务比较</a>时，把客户端来源、支持方式和资料说明列入候选条件，不只看节点或价格。比较页不能证明你安装的扩展已经正确设置，服务也不能替目标网站删除账户历史。配置越复杂，越需要能够解释与恢复；对普通使用者，清楚的最小组合往往更易核查。</p>
+<h2>为共享设备另做一轮检查</h2>
+<p>确认浏览器个人资料、下载目录与账户会话不会被下一位使用者直接访问。退出网站、关闭隐私窗口与锁定系统是不同动作，按场景完成必要步骤。不要把工作与私人凭据混在一个公共浏览器配置里。涉及多人共用的设备，应有明确负责人管理扩展和更新，不能让任何使用者随意安装工具。</p>
+<h2>用权限清单替代绝对匿名口号</h2>
+<p>最后保存组件、用途、权限、资料位置和恢复方法五列，注明查看日期。无法核实的部分写未知，软件或服务变化后再复查。隐私保护的实际价值，是减少不必要暴露并维持对账户与设备的控制；能够说明哪些资料由谁处理，比宣称从此完全没有痕迹更准确，也更有助于日常维护。</p></div></article>
+</main>
+<!-- Strict Footer: ONLY 4 titles -->
+<footer class="strict-footer-ink">
+<div class="footer-four-ink">
+<a href="sitemap.html" target="_blank">网站地图</a>
+<a href="about.html" target="_blank">关于我们</a>
+<a href="terms.html" target="_blank">服务条款</a>
+<a href="privacy.html" target="_blank">隐私政策</a>
+</div>
+<div class="footer-ink-copy">
+      © 2026 渔云加速器 yuyuncloud.lol 版权所有 | 墨韵云境锦鲤专线网络
     </div>
-  </header>
-
-  <main class="container">
-    <nav class="ink-crumb">
-      <a href="index.html">首页</a>
-      <span>&gt;</span>
-      <a href="chronicles.html">锦鲤文札</a>
-      <span>&gt;</span>
-      <span>正文</span>
-    </nav>
-
-    <header class="article-header-box">
-      <h1 class="article-title-serif">Chrome、Edge、Firefox 与代理扩展：浏览器怎么搭配</h1>
-      <div class="article-meta-row">
- <span>刊发日期: 2026-11-12</span>
- <span>栏目: 浏览器</span>
- <span>撰稿人: 工具观察室</span>
- <span>阅读时长: 约5分钟</span>
- </div>
-    </header>
-
-    <article class="article-body-container">
-<h2>一、客户端与扩展的区别</h2>
-<p>客户端接管整个系统或指定应用的流量；浏览器扩展只影响浏览器内的请求。多数用户只用客户端就足够，扩展适合需要按网址精细切换的人。</p>
-<h2>二、三款浏览器的特点</h2>
-<ul><li>Chrome：扩展生态最丰富，兼容性好。</li><li>Edge：与 Windows 集成较好，资源占用相对低。</li><li>Firefox：隐私设置丰富，拥有独立的网络设置，可单独配置代理。</li></ul>
-<h2>三、常见搭配</h2>
-<p>日常使用：客户端使用系统代理，浏览器直接跟随即可。需要特殊控制：用 Firefox 配置独立的代理，其他浏览器保持直连，互不干扰。</p>
-<h2>四、使用扩展的注意事项</h2>
-<p>只安装来源可信的扩展，并检查它索要的权限。扩展越多，页面越容易出现冲突，遇到异常时先逐个停用排查。</p>
-<h2>五、隐私层面</h2>
-<p>定期清理缓存与 Cookie，使用隐私窗口处理敏感事务，并关注浏览器的更新。</p>
- <div class="article-foot-tag">
-        <span>本文由 渔云加速器·锦鲤文札 独家刊载，版权所有。</span>
-        <a href="chronicles.html" class="content-link">返回 锦鲤文札 专栏目录 &rarr;</a>
-      </div>
-    </article>
-  </main>
-
-  <!-- Strict Footer: ONLY 4 titles -->
-  <footer class="strict-footer-ink">
-    <div class="footer-four-ink">
-      <a href="sitemap.html" target="_blank">网站地图</a>
-      <a href="about.html" target="_blank">关于我们</a>
-      <a href="terms.html" target="_blank">服务条款</a>
-      <a href="privacy.html" target="_blank">隐私政策</a>
-    </div>
-    <div class="footer-ink-copy">
-      &copy; 2026 渔云加速器 yuyuncloud.lol 版权所有 | 墨韵云境锦鲤专线网络
-    </div>
-  </footer>
-
+</footer>
 </body>
 </html>

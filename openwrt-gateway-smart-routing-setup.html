@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>TUN 模式与系统代理：区别、适用场景与常见坑 - 锦鲤文札</title>
-  <meta name="description" content="客户端里的系统代理与 TUN 模式有什么区别？分别适合什么场景，又有哪些常见的设置误区？一篇说清楚。">
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0" name="viewport"/>
+<title>OpenWrt按设备安排网络策略：工作电脑、电视与访客的分组验收</title>
+<meta content="OpenWrt按设备安排网络策略：工作电脑、电视与访客的分组验收，包含操作次序、结果判读与适用条件，帮助读者把实际任务和连接问题分开验证。" name="description"/>
+<style>
     :root {
       --bg-paper: #f7f5ed;
       --bg-card: #ffffff;
@@ -330,88 +331,88 @@
   </style>
 </head>
 <body>
-
-  <!-- Top Nav -->
-  <header class="ink-nav">
-    <div class="ink-nav-inner">
-      <a href="index.html" class="ink-brand">
-        <svg class="ink-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M18 85 C 24 38, 55 16, 82 24" stroke="#1a1e23" stroke-width="3" stroke-linecap="round"/>
-          <line x1="82" y1="24" x2="82" y2="52" stroke="#1e5a7d" stroke-width="1.5" stroke-dasharray="3 3"/>
-          <circle cx="82" cy="52" r="3" fill="#c0392b"/>
-          <path d="M34 60 C 48 45, 72 48, 80 58 C 70 65, 52 68, 34 60 Z" fill="#1e5a7d"/>
-          <path d="M34 60 L 22 52 L 25 68 Z" fill="#c0392b"/>
-          <path d="M52 52 L 40 34 L 58 48 Z" fill="#c0392b"/>
-        </svg>
-        <div class="ink-brand-name">渔云加速器</div>
-      </a>
-
-      <nav>
-        <ul class="ink-menu-links">
-          <li><a href="index.html#advantages">锦鲤优势</a></li>
-          <li><a href="index.html#streaming">影音通达</a></li>
-          <li><a href="index.html#pricing">清风套餐</a></li>
-          <li><a href="index.html#faq">答客所问</a></li>
-          <li><a href="index.html#reviews">知音口碑</a></li>
-          <li><a href="chronicles.html" class="active">锦鲤文札</a></li>
-        </ul>
-      </nav>
-
-      <a href="https://ww012.twilightaff.com/#/?code=A56DH1Af" target="_blank" rel="nofollow" class="ink-nav-login">
+<!-- Top Nav -->
+<header class="ink-nav">
+<div class="ink-nav-inner">
+<a class="ink-brand" href="index.html">
+<svg class="ink-logo-svg" fill="none" viewbox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 85 C 24 38, 55 16, 82 24" stroke="#1a1e23" stroke-linecap="round" stroke-width="3"></path>
+<line stroke="#1e5a7d" stroke-dasharray="3 3" stroke-width="1.5" x1="82" x2="82" y1="24" y2="52"></line>
+<circle cx="82" cy="52" fill="#c0392b" r="3"></circle>
+<path d="M34 60 C 48 45, 72 48, 80 58 C 70 65, 52 68, 34 60 Z" fill="#1e5a7d"></path>
+<path d="M34 60 L 22 52 L 25 68 Z" fill="#c0392b"></path>
+<path d="M52 52 L 40 34 L 58 48 Z" fill="#c0392b"></path>
+</svg>
+<div class="ink-brand-name">渔云加速器</div>
+</a>
+<nav>
+<ul class="ink-menu-links">
+<li><a href="index.html#advantages">锦鲤优势</a></li>
+<li><a href="index.html#streaming">影音通达</a></li>
+<li><a href="index.html#pricing">清风套餐</a></li>
+<li><a href="index.html#faq">答客所问</a></li>
+<li><a href="index.html#reviews">知音口碑</a></li>
+<li><a class="active" href="chronicles.html">锦鲤文札</a></li>
+</ul>
+</nav>
+<a class="ink-nav-login" href="https://ww012.twilightaff.com/#/?code=A56DH1Af" rel="nofollow" target="_blank">
         登录节点
       </a>
+</div>
+</header>
+<main class="container">
+<nav class="ink-crumb">
+<a href="index.html">首页</a>
+<span>&gt;</span>
+<a href="chronicles.html">锦鲤文札</a>
+<span>&gt;</span>
+<span>正文</span>
+</nav>
+<header class="article-header-box">
+<h1 class="article-title-serif">OpenWrt按设备安排网络策略：工作电脑、电视与访客的分组验收</h1>
+<div class="article-meta-row">
+<span>刊发日期: 2026-11-10</span>
+<span>栏目: 客户端设置</span>
+<span>撰稿人: 设置研究室</span>
+<span>阅读时长: 约6分钟</span>
+</div>
+</header>
+<article class="article-body-container"><div data-swc-article-body="2026-11-16"><h2>不同设备不必承担相同接入规则</h2>
+<p>家庭里工作电脑、电视、打印机和访客手机承担不同任务，全部强制采用一套连接策略，可能让局域网访问与娱乐需求互相影响。按设备或网络分组时，应先明确每组需要访问什么，再设计规则。OpenWrt提供相应网络与防火墙能力，但具体配置依赖版本和拓扑，不能把别人的完整文件直接覆盖到自己路由器。</p>
+<h2>第一步画出设备与访问需求</h2>
+<p>将设备分为日常可信设备、影音设备和访客等实际类别，写明是否需要打印机、存储或内部服务。分类应服务管理，不是按名字自动判断安全。访客需要互联网，未必需要读取家庭文件；电视需要播放服务，也不一定需要访问工作电脑。先明确允许关系，后面的配置才有可验证目标。</p>
+<h2>第二步记录现有地址与接口职责</h2>
+<p>在LuCI网络相关页面查看当前接口、地址范围和上游连接，确认哪台设备提供DHCP与网关。新增网络不能与已有范围冲突，旁路或无线接入点模式也不能照搬主路由的配置。记录管理入口并导出适用备份，保存到受控电脑。变更前确保有正常恢复方式，不在重要会议或网课期间试验。</p>
+<h2>第三步先建立一个测试分组</h2>
+<p>按当前OpenWrt官方指南，在测试环境或可恢复窗口创建相应接口与网络，将一台自有设备加入。静态地址、DHCP和防火墙区域需要配合，不能只增加一个无线名称就认为已经隔离。使用界面操作时逐项保存并核对结果，不一次同时修改所有家庭网络，让故障范围保持可以理解。</p>
+<h2>第四步检查设备能否取得正确地址</h2>
+<p>测试设备连接后，查看它取得的地址、网关和DNS是否属于预期网络。无法取得地址时，先调查DHCP和无线关联，不立即修改代理规则。能够取得地址但无法访问互联网，则继续检查转发与解析。把接入、地址分配和出站分层，可以避免在最基础连接未完成时就调整复杂分流。</p>
+<h2>第五步确认允许与拒绝都符合目标</h2>
+<p>对访客组，验证正常网页可访问，同时家庭内部资料入口不可按未经授权的方式访问。对工作组，确认必要的打印或内部资源仍可用。测试只使用自己有权管理的设备与资源，不扫描其他人的系统。防火墙区域间转发与同一无线下的客户端隔离是不同控制，不能打开一个选项就认定所有隔离目标已完成。</p>
+<h2>第六步为需要的流量配置分流</h2>
+<p>在所用客户端或插件正式支持的方式下，选择明确的测试设备或目标规则，观察实际连接与出站。不要让设备分组与域名规则互相覆盖却没有说明。优先保持局域网必要访问，外部任务逐项验证。网页正常而电视应用失败时，确认应用真实路径和解析，不把整个家庭网关切成全局模式来掩盖个别问题。</p>
+<h2>第七步关注地址变化与设备识别</h2>
+<p>终端可能采用私有无线地址或重新获得地址，基于某个固定标识的规则需要理解这些变化。按设备与网络的正常管理方式建立可维护映射，不凭一次看到的地址就永久认定属于同一个人。新增设备后应进入预定组，不能因旧规则没有匹配就自动获得过宽权限，分类与默认行为都要明确。</p>
+<h2>第八步测试重连与路由器恢复</h2>
+<p>让测试设备正常断开再加入，确认仍进入正确网络；在批准维护窗口按正常流程恢复服务后，检查关键规则仍存在。不要只在配置刚保存时测试一次。订阅或规则集更新也可能影响结果，应保留版本与更新方式。重要家庭任务至少要有一条可用基础方案，新增功能失败时能够回到已验证状态。</p>
+<h2>套餐条件要对应整组实际使用</h2>
+<p>参考<a href="https://dajichang.mom/">家庭网关机场套餐比较</a>时，核对路由器支持、连接数、流量与计费方式。网关汇聚多台设备不代表服务规则不再适用，也不应假定无限共享。影音与办公的使用时段可能重叠，先估算实际需要，再选择自己能够维护的配置复杂度，不只追求更大的节点列表。</p>
+<h2>给管理者留下清楚的分组说明</h2>
+<p>记录每组用途、地址范围、允许资源、采用策略和恢复方法，凭据另行保管。家人不需要理解所有底层参数，但应知道哪个网络适合访客、遇到问题找谁。新增设备或更换路由器时，按这张说明复查，而不是从旧配置中猜哪些规则仍然有用。清楚的命名能减少误接与误改。</p>
+<h2>完成后检查所有原有任务</h2>
+<p>验证网页、电视、打印、共享存储与工作访问，确保新分组没有破坏原本正常的使用。未验证的能力明确标注，不宣称一次配置就实现绝对隔离。家庭策略的好结果，是不同设备按需要工作、访问边界可解释且故障可以恢复；只有这些条件都清楚，智能分流才真正减少日常维护负担。</p></div></article>
+</main>
+<!-- Strict Footer: ONLY 4 titles -->
+<footer class="strict-footer-ink">
+<div class="footer-four-ink">
+<a href="sitemap.html" target="_blank">网站地图</a>
+<a href="about.html" target="_blank">关于我们</a>
+<a href="terms.html" target="_blank">服务条款</a>
+<a href="privacy.html" target="_blank">隐私政策</a>
+</div>
+<div class="footer-ink-copy">
+      © 2026 渔云加速器 yuyuncloud.lol 版权所有 | 墨韵云境锦鲤专线网络
     </div>
-  </header>
-
-  <main class="container">
-    <nav class="ink-crumb">
-      <a href="index.html">首页</a>
-      <span>&gt;</span>
-      <a href="chronicles.html">锦鲤文札</a>
-      <span>&gt;</span>
-      <span>正文</span>
-    </nav>
-
-    <header class="article-header-box">
-      <h1 class="article-title-serif">TUN 模式与系统代理：区别、适用场景与常见坑</h1>
-      <div class="article-meta-row">
- <span>刊发日期: 2026-11-10</span>
- <span>栏目: 客户端设置</span>
- <span>撰稿人: 设置研究室</span>
- <span>阅读时长: 约6分钟</span>
- </div>
-    </header>
-
-    <article class="article-body-container">
-<h2>一、系统代理</h2>
-<p>客户端把代理地址写入系统设置，大多数浏览器和遵循系统设置的软件会自动使用。设置简单，对系统影响小，但有些程序不读取系统代理，因此不会被转发。</p>
-<h2>二、TUN 模式</h2>
-<p>客户端创建一个虚拟网卡，在系统层面接管流量，几乎所有程序（包括游戏和命令行工具）都会被转发。覆盖更全面，但需要更高权限，配置也稍复杂。</p>
-<h2>三、怎么选</h2>
-<ul><li>只需要浏览器和常见软件：系统代理即可。</li><li>需要游戏、命令行或不遵守系统代理的程序：使用 TUN。</li><li>遇到兼容问题：先退回系统代理，排除 TUN 带来的变量。</li></ul>
-<h2>四、常见的坑</h2>
-<p>TUN 模式下，局域网与内网地址需要设置为直连，否则可能无法访问打印机或公司内网；与杀毒软件、其他虚拟网卡软件并存时，可能出现冲突。</p>
-<h2>五、如何切换</h2>
-<p>切换前先退出相关程序，切换后重新测试。保留一个简单的备用方案，出问题时能迅速回退。</p>
- <div class="article-foot-tag">
-        <span>本文由 渔云加速器·锦鲤文札 独家刊载，版权所有。</span>
-        <a href="chronicles.html" class="content-link">返回 锦鲤文札 专栏目录 &rarr;</a>
-      </div>
-    </article>
-  </main>
-
-  <!-- Strict Footer: ONLY 4 titles -->
-  <footer class="strict-footer-ink">
-    <div class="footer-four-ink">
-      <a href="sitemap.html" target="_blank">网站地图</a>
-      <a href="about.html" target="_blank">关于我们</a>
-      <a href="terms.html" target="_blank">服务条款</a>
-      <a href="privacy.html" target="_blank">隐私政策</a>
-    </div>
-    <div class="footer-ink-copy">
-      &copy; 2026 渔云加速器 yuyuncloud.lol 版权所有 | 墨韵云境锦鲤专线网络
-    </div>
-  </footer>
-
+</footer>
 </body>
 </html>
